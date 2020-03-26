@@ -3,7 +3,7 @@ import express from 'express';
 export default class Server {
 
     private _app: express.Application;
-    private _port: number = 3000;
+    private _port: number = process.env.PORT ? +process.env.PORT : 3000;
 
     constructor() {
         this._app = express();
