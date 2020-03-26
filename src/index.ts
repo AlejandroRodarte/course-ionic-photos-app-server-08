@@ -1,1 +1,5 @@
-console.log('Hello yo wife');
+import Server from './classes/server';
+
+const server = new Server();
+
+server.start(() => console.log(`Servidor corriendo en puerto ${server.port}`))
