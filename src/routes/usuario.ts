@@ -7,6 +7,11 @@ import auth from '../middlewares/auth';
 
 const userRoutes = Router();
 
+userRoutes.get('/', auth, (req: any, res: Response) => res.send({
+    ok: true,
+    usuario: req.usuario
+}));
+
 userRoutes.post('/login', async (req: Request, res: Response) => {
 
     const { email, password } = req.body;
