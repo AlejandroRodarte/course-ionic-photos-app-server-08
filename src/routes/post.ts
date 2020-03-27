@@ -55,7 +55,7 @@ postRoutes.post('/', auth, async (req: any, res: Response) => {
 
 });
 
-postRoutes.post('/upload', auth, (req: any, res: Response) => {
+postRoutes.post('/upload', auth, async (req: any, res: Response) => {
 
     if (!req.files) {
         return res.status(400).send({
@@ -80,7 +80,7 @@ postRoutes.post('/upload', auth, (req: any, res: Response) => {
         });
     }
 
-    FileSystem.saveTempImage(file, req.usuario._id);
+    await FileSystem.saveTempImage(file, req.usuario._id);
 
     return res.status(200).send({
         ok: true,

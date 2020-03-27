@@ -6,12 +6,24 @@ import uniqid from 'uniqid';
 
 export default class FileSystem {
 
-    static saveTempImage(file: UploadedFile, userId: string) {
+    static saveTempImage(file: UploadedFile, userId: string): Promise<void> {
 
         const path = this.createUserFolder(userId);
         const filename = this.generateUniqueFilename(file.name);
 
-        console.log(filename);
+        return new Promise((resolve, reject) => {
+
+            file.mv(`${path}/${filename}`, (err) => {
+    
+                if (err) {
+                    reject(err);
+                }
+
+                resolve();
+    
+            });
+
+        });
 
     }
 
