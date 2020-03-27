@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 import Usuario from '../models/usuario';
 
-import Token from '../classes/token';
+import auth from '../middlewares/auth';
 
 const userRoutes = Router();
 
@@ -84,6 +84,15 @@ userRoutes.post('/create', async (req: Request, res: Response) => {
         ok: true,
         token
     });
+
+});
+
+userRoutes.post('/update', auth, async (req: any, res: Response) => {
+
+    return res.json({
+        ok: true,
+        usuario: req.usuario
+    })
 
 });
 

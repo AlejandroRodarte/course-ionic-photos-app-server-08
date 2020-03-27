@@ -9,7 +9,7 @@ export default class Token {
         return jwt.sign(payload, this.secretKey, { expiresIn: this.expirationTime });
     }
 
-    public static verifyToken(token: string): Promise<string | object> {
+    public static verifyToken(token: string): Promise<any> {
 
         return new Promise((resolve, reject) => {
 

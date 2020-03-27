@@ -38,7 +38,7 @@ usuarioSchema.methods.generateToken = function(): string {
     const { _id, nombre, email, avatar } = this;
     const data = { _id, nombre, email, avatar };
 
-    return Token.generateToken(data);
+    return Token.generateToken({ usuario: data });
 
 };
 
