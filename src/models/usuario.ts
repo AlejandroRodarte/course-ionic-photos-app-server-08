@@ -1,6 +1,8 @@
 import { Schema, model, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
 
+import Token from '../classes/token';
+
 const usuarioSchema = new Schema({
 
     nombre: {
@@ -31,12 +33,22 @@ usuarioSchema.methods.comparePasswords = async function(password: string): Promi
     return await bcrypt.compare(password, user.password);
 };
 
+usuarioSchema.methods.generateToken = function(): string {
+
+    const { _id, nombre, email, avatar } = this;
+    const data = { _id, nombre, email, avatar };
+
+    return Token.generateToken(data);
+
+};
+
 interface IUsuario extends Document {
     nombre: string;
     avatar: string;
     email: string;
     password: string;
     comparePasswords: (password: string) => Promise<boolean>;
+    generateToken: () => string;
 }
 
 const Usuario = model<IUsuario>('Usuario', usuarioSchema);

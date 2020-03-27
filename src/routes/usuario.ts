@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt';
 
 import Usuario from '../models/usuario';
 
+import Token from '../classes/token';
+
 const userRoutes = Router();
 
 userRoutes.post('/login', async (req: Request, res: Response) => {
@@ -29,9 +31,11 @@ userRoutes.post('/login', async (req: Request, res: Response) => {
             });
         }
 
+        const token = user.generateToken();
+
         return res.json({
             ok: true,
-            token: 'some-token'
+            token
         });
 
     } catch (err) {
@@ -74,9 +78,11 @@ userRoutes.post('/create', async (req: Request, res: Response) => {
         });
     }
 
+    const token = userDoc.generateToken();
+
     return res.json({
         ok: true,
-        user: userDoc
+        token
     });
 
 });
