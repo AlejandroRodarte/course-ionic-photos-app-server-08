@@ -2,6 +2,7 @@ import { Router, Response, Request } from 'express';
 import auth from '../middlewares/auth';
 import Post from '../models/post';
 import { UploadedFile } from 'express-fileupload';
+import FileSystem from '../classes/file-system';
 
 const postRoutes = Router();
 
@@ -54,7 +55,7 @@ postRoutes.post('/', auth, async (req: any, res: Response) => {
 
 });
 
-postRoutes.post('/upload', auth, (req: Request, res: Response) => {
+postRoutes.post('/upload', auth, (req: any, res: Response) => {
 
     if (!req.files) {
         return res.status(400).send({
@@ -78,6 +79,8 @@ postRoutes.post('/upload', auth, (req: Request, res: Response) => {
             mensaje: 'What was uploaded is not an image'
         });
     }
+
+    FileSystem.saveTempImage(file, req.usuario._id);
 
     return res.status(200).send({
         ok: true,
