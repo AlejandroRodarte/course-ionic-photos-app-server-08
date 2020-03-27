@@ -1,5 +1,6 @@
 import bodyParser from 'body-parser';
 import fileUpload from 'express-fileupload';
+import cors from 'cors';
 
 import Server from './classes/server';
 
@@ -14,6 +15,8 @@ server.app.use(bodyParser.urlencoded({ extended: true }));
 server.app.use(bodyParser.json());
 
 server.app.use(fileUpload());
+
+server.app.use(cors({ origin: true, credentials: true }));
 
 server.app.use('/user', userRoutes);
 server.app.use('/post', postRoutes);
