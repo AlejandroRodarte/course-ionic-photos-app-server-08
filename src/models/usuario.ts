@@ -2,6 +2,7 @@ import { Schema, model, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 import Token from '../classes/token';
+import { NextFunction } from 'express';
 
 const usuarioSchema = new Schema({
 
@@ -42,13 +43,31 @@ usuarioSchema.methods.generateToken = function(): string {
 
 };
 
-interface IUsuario extends Document {
+usuarioSchema.methods.updateField = function(key: string, value: any): void {
+    const user = this;
+    user[key] = value;
+};
+
+usuarioSchema.pre('save', async function(next: NextFunction) {
+
+    const user = this as any;
+
+    if (user.isModified('password')) {
+        user.password = await bcrypt.hash(user.password, process.env.BCRYPT_ROUNDS ? +process.env.BCRYPT_ROUNDS : 8);
+    }
+
+    next();
+
+});
+
+export interface IUsuario extends Document {
     nombre: string;
     avatar: string;
     email: string;
     password: string;
     comparePasswords: (password: string) => Promise<boolean>;
     generateToken: () => string;
+    updateField: (key: string, value: any) => void;
 }
 
 const Usuario = model<IUsuario>('Usuario', usuarioSchema);

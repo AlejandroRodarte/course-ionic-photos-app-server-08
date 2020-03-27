@@ -89,10 +89,47 @@ userRoutes.post('/create', async (req: Request, res: Response) => {
 
 userRoutes.post('/update', auth, async (req: any, res: Response) => {
 
-    return res.json({
-        ok: true,
-        usuario: req.usuario
-    })
+    const updatableFields = ['nombre', 'email', 'avatar', 'password'];
+
+    const requestBodyFields = Object.keys(req.body);
+
+    const isUpdatable = requestBodyFields.every((field: string) => updatableFields.includes(field));
+
+    if (!isUpdatable) {
+        return res.status(401).send({
+            ok: false,
+            mensaje: 'Send valid fields'
+        });
+    }
+
+    try {
+
+        const user = await Usuario.findOne({ _id: req.usuario._id });
+
+        if (!user) {
+            return res.status(404).send({
+                ok: false,
+                mensaje: 'User not found'
+            });
+        }
+
+        requestBodyFields.forEach((field: string) => user.updateField(field, req.body[field]));
+
+        await user.save();
+
+        const token = user.generateToken();
+
+        return res.json({
+            ok: true,
+            token
+        });    
+
+    } catch (err) {
+        return res.status(400).send({
+            ok: false,
+            err
+        });
+    }
 
 });
 
