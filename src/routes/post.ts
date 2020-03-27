@@ -1,7 +1,9 @@
 import { Router, Response, Request } from 'express';
+import { UploadedFile } from 'express-fileupload';
+import sharp from 'sharp';
+
 import auth from '../middlewares/auth';
 import Post from '../models/post';
-import { UploadedFile } from 'express-fileupload';
 import FileSystem from '../classes/file-system';
 import Usuario from '../models/usuario';
 
@@ -113,8 +115,10 @@ postRoutes.get('/imagen/:userId/:filename', async (req: Request, res: Response) 
 
         const imageBuffer = await FileSystem.getFileBuffer(userId, filename);
 
-        res.contentType(`image/${extension}`);
-        res.send(imageBuffer);
+        const pngBuffer = await sharp(imageBuffer).resize({ height: 400 }).png().toBuffer();
+
+        res.contentType(`image/png`);
+        res.send(pngBuffer);
 
     } catch (err) {
         return res.status(500).send({
