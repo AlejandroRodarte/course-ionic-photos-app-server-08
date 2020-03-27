@@ -1,6 +1,7 @@
 import { Router, Response, Request } from 'express';
 import auth from '../middlewares/auth';
 import Post from '../models/post';
+import { UploadedFile } from 'express-fileupload';
 
 const postRoutes = Router();
 
@@ -49,6 +50,38 @@ postRoutes.post('/', auth, async (req: any, res: Response) => {
     return res.json({
         ok: true,
         post: postDoc
+    });
+
+});
+
+postRoutes.post('/upload', auth, (req: Request, res: Response) => {
+
+    if (!req.files) {
+        return res.status(400).send({
+            ok: false,
+            mensaje: 'No file uploaded'
+        });
+    }
+
+    const file = req.files.image as UploadedFile;
+
+    if (!file) {
+        return res.status(400).send({
+            ok: false,
+            mensaje: 'No file uploaded named image'
+        });
+    }
+
+    if (!file.mimetype.includes('image')) {
+        return res.status(400).send({
+            ok: false,
+            mensaje: 'What was uploaded is not an image'
+        });
+    }
+
+    return res.status(200).send({
+        ok: true,
+        file: file.mimetype
     });
 
 });
