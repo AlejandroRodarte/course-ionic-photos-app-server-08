@@ -48,6 +48,34 @@ export default class FileSystem {
 
     }
 
+    static getFileBuffer(userId: string, filename: string): Promise<Buffer> { 
+
+        return new Promise((resolve, reject) => {
+
+            let finalPath: string;
+
+            const imagePath = path.resolve(__dirname, '../uploads', userId, 'posts', filename);
+
+            if (!fs.existsSync(imagePath)) {
+                finalPath = path.resolve(__dirname, '../assets', '400x250.jpg');
+            } else {
+                finalPath = imagePath;
+            }
+
+            fs.readFile(finalPath, (err, data) => {
+
+                if (err) {
+                    reject(err);
+                }
+
+                resolve(data);
+
+            });
+
+        });
+
+    }
+
     private static getFilenamesFromTemp(tempDir: string): string[] {
         return fs.readdirSync(tempDir) || [];
     }

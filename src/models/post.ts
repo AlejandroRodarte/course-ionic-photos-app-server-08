@@ -41,7 +41,7 @@ interface IPost extends Document {
     mensaje: string;
     img: string[];
     coords: string;
-    usuario: string;
+    usuario: Schema.Types.ObjectId;
 }
 
 const Post = model<IPost>('Post', postSchema);

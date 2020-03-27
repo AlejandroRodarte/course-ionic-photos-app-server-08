@@ -3,6 +3,7 @@ import auth from '../middlewares/auth';
 import Post from '../models/post';
 import { UploadedFile } from 'express-fileupload';
 import FileSystem from '../classes/file-system';
+import Usuario from '../models/usuario';
 
 const postRoutes = Router();
 
@@ -89,6 +90,38 @@ postRoutes.post('/upload', auth, async (req: any, res: Response) => {
         ok: true,
         file: file.mimetype
     });
+
+});
+
+postRoutes.get('/imagen/:userId/:filename', async (req: Request, res: Response) => {
+
+    const userId = req.params.userId;
+    const filename = req.params.filename;
+
+    const [, extension] = filename.split('.');
+
+    try {
+
+        const user = await Usuario.findOne({ _id: userId });
+
+        if (!user) {
+            return res.status(404).send({
+                ok: false,
+                mensaje: 'User not found'
+            });
+        }
+
+        const imageBuffer = await FileSystem.getFileBuffer(userId, filename);
+
+        res.contentType(`image/${extension}`);
+        res.send(imageBuffer);
+
+    } catch (err) {
+        return res.status(500).send({
+            ok: false,
+            err
+        });
+    }
 
 });
 
