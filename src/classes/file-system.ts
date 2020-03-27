@@ -27,6 +27,31 @@ export default class FileSystem {
 
     }
 
+    static moveFilesFromTempToPosts(userId: string): string[] {
+
+        const userTempPath = path.resolve(__dirname, '../uploads', userId, 'temp');
+        const userPostsPath = path.resolve(__dirname, '../uploads', userId, 'posts');
+
+        if (!fs.existsSync(userTempPath)) {
+            return [];
+        }
+
+        if (!fs.existsSync(userPostsPath)) {
+            fs.mkdirSync(userPostsPath);
+        }
+
+        const filenames = this.getFilenamesFromTemp(userTempPath);
+
+        filenames.forEach((filename: string) => fs.renameSync(`${userTempPath}/${filename}`, `${userPostsPath}/${filename}`));
+
+        return filenames;
+
+    }
+
+    private static getFilenamesFromTemp(tempDir: string): string[] {
+        return fs.readdirSync(tempDir) || [];
+    }
+
     private static createUserFolder(userId: string): string {
 
         const userPath = path.resolve(__dirname, '../uploads', userId);

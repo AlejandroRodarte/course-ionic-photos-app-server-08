@@ -36,6 +36,9 @@ postRoutes.post('/', auth, async (req: any, res: Response) => {
 
     post.usuario = req.usuario._id;
 
+    const filenames = FileSystem.moveFilesFromTempToPosts(req.usuario._id);
+    post.img = filenames;
+
     const postDoc = new Post(post);
 
     try {
