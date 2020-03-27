@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 
-import Usuario from '../models/usuario';
+import Usuario, { UsuarioUpdatableFields } from '../models/usuario';
 
 import auth from '../middlewares/auth';
 
@@ -91,7 +91,7 @@ userRoutes.post('/update', auth, async (req: any, res: Response) => {
 
     const updatableFields = ['nombre', 'email', 'avatar', 'password'];
 
-    const requestBodyFields = Object.keys(req.body);
+    const requestBodyFields = Object.keys(req.body) as UsuarioUpdatableFields[];
 
     const isUpdatable = requestBodyFields.every((field: string) => updatableFields.includes(field));
 
@@ -113,7 +113,9 @@ userRoutes.post('/update', auth, async (req: any, res: Response) => {
             });
         }
 
-        requestBodyFields.forEach((field: string) => user.updateField(field, req.body[field]));
+
+
+        requestBodyFields.forEach((field: UsuarioUpdatableFields) => user.updateField(field, req.body[field]));
 
         await user.save();
 

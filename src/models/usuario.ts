@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import Token from '../classes/token';
 import { NextFunction } from 'express';
 
-const usuarioSchema = new Schema({
+const usuarioSchema = new Schema<IUsuario>({
 
     nombre: {
         type: String,
@@ -43,14 +43,14 @@ usuarioSchema.methods.generateToken = function(): string {
 
 };
 
-usuarioSchema.methods.updateField = function(key: string, value: any): void {
+usuarioSchema.methods.updateField = function(key: UsuarioUpdatableFields, value: any): void {
     const user = this;
     user[key] = value;
 };
 
-usuarioSchema.pre('save', async function(next: NextFunction) {
+usuarioSchema.pre<IUsuario>('save', async function(next: NextFunction) {
 
-    const user = this as any;
+    const user = this;
 
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, process.env.BCRYPT_ROUNDS ? +process.env.BCRYPT_ROUNDS : 8);
@@ -60,15 +60,17 @@ usuarioSchema.pre('save', async function(next: NextFunction) {
 
 });
 
-export interface IUsuario extends Document {
+interface IUsuario extends Document {
     nombre: string;
     avatar: string;
     email: string;
     password: string;
     comparePasswords: (password: string) => Promise<boolean>;
     generateToken: () => string;
-    updateField: (key: string, value: any) => void;
+    updateField: (key: UsuarioUpdatableFields, value: any) => void;
 }
+
+export type UsuarioUpdatableFields = 'nombre' | 'avatar' | 'email' | 'password';
 
 const Usuario = model<IUsuario>('Usuario', usuarioSchema);
 
