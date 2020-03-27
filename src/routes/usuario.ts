@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import bcrypt from 'bcrypt';
 
 import Usuario from '../models/usuario';
 
@@ -14,6 +15,15 @@ userRoutes.post('/create', async (req: Request, res: Response) => {
         password,
         avatar
     };
+    
+    try {
+        user.password = await bcrypt.hash(user.password, process.env.BCRYPT_ROUNDS ? +process.env.BCRYPT_ROUNDS : 8);
+    } catch (err) {
+        return res.status(400).send({
+            ok: false,
+            err
+        });
+    }
 
     const userDoc = new Usuario(user);
 
